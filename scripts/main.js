@@ -1,0 +1,551 @@
+
+console.log("Runway is ready!");
+
+// Find the form and dashboard elements.
+const expenseForm = document.getElementById("expense-entry-form");
+const totalSpentElement = document.getElementById("total-spent");
+const weeklySpentElement = document.getElementById("weekly-spent");
+
+const monthlySpentElement = document.getElementById("monthly-spent");
+const monthlyBudgetElement = document.getElementById("monthly-budget");
+const budgetRemainingElement = document.getElementById("budget-remaining");
+const runwayDaysElement = document.getElementById("runway-days");
+const budgetForm = document.getElementById("budget-form");
+const budgetInput = document.getElementById("budget-amount");
+
+let monthlyBudget = Number(
+    localStorage.getItem("runway:monthly-budget")
+) || 0;
+
+// Load saved expenses.
+let expenses = JSON.parse(localStorage.getItem("runway:records")) || [];
+
+
+/* Currency settings */
+const currencySelect = document.getElementById("currency-select");
+const currencyStatus = document.getElementById("currency-status");
+
+const currencySymbols = {
+    RWF: "RWF",
+    USD: "$",
+    MWK: "MK"
+};
+
+// Temporary example rates; we can adjust them later.
+const exchangeRates = {
+    RWF: 1,
+    USD: 0.0007,
+    MWK: 1.1
+};
+
+let selectedCurrency = localStorage.getItem("runway:currency") || "RWF";
+
+function formatCurrency(amount) {
+    const convertedAmount = Number(amount) * exchangeRates[selectedCurrency];
+
+    return currencySymbols[selectedCurrency] + " " +
+        convertedAmount.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+}
+
+
+function updateCurrencySelection() {
+    const sidebarCurrency = document.querySelector(
+        ".sidebar-currency strong"
+    );
+
+    if (sidebarCurrency) {
+        sidebarCurrency.textContent = selectedCurrency;
+    }
+
+    if (currencySelect) {
+        currencySelect.value = selectedCurrency;
+    }
+
+    if (currencyStatus) {
+        currencyStatus.textContent =
+            `Current currency: ${selectedCurrency}`;
+    }
+}
+
+if (currencySelect) {
+    currencySelect.addEventListener("change", function () {
+        selectedCurrency = currencySelect.value;
+
+        localStorage.setItem("runway:currency", selectedCurrency);
+
+        updateCurrencySelection();
+        updateDashboard();
+        displayExpenses();
+    });
+}
+
+updateCurrencySelection();
+
+
+const searchInput = document.getElementById("expense-search");
+const sortSelect = document.getElementById("sort-expenses");
+
+// Save expenses in the browser.
+function saveExpenses() {
+    localStorage.setItem("runway:records", JSON.stringify(expenses));
+}
+
+
+const exportButton = document.getElementById("export-expenses");
+
+// Export saved expenses as a JSON file.
+exportButton.addEventListener("click", function () {
+
+    const data = JSON.stringify(expenses, null, 2);
+    const file = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(file);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "runway-expenses.json";
+    link.click();
+
+    URL.revokeObjectURL(url);
+});
+
+
+const importButton = document.getElementById("import-expenses");
+const importFileInput = document.getElementById("import-file");
+const importStatus = document.getElementById("import-status");
+
+// Import expense records from a JSON file.
+importButton.addEventListener("click", function () {
+    const file = importFileInput.files[0];
+
+    if (!file) {
+        importStatus.textContent = "Please select a JSON file first.";
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function () {
+        try {
+
+            const importedExpenses = JSON.parse(reader.result);
+
+            if (!Array.isArray(importedExpenses)) {
+                throw new Error("The file must contain a list of expenses.");
+            }
+
+           
+const validExpenses = importedExpenses.every(function (expense) {
+    const validCategories = [
+        "Food",
+        "Books",
+        "Transport",
+        "Entertainment",
+        "Fees",
+        "Other"
+    ];
+
+    const validDate = typeof expense.date === "string" &&
+        /^\d{4}-\d{2}-\d{2}$/.test(expense.date) &&
+        !Number.isNaN(Date.parse(expense.date));
+
+    return expense &&
+        typeof expense.id === "string" &&
+        typeof expense.description === "string" &&
+        expense.description.trim().length >= 1 &&
+        Number.isFinite(Number(expense.amount)) &&
+        Number(expense.amount) > 0 &&
+        validCategories.includes(expense.category) &&
+        validDate &&
+        ["need", "want"].includes(expense.needWant);
+});
+
+            if (!validExpenses) {
+    const invalidExpense = importedExpenses.find(function (expense) {
+        return !expense ||
+            typeof expense.id !== "string" ||
+            typeof expense.description !== "string" ||
+            expense.description.trim().length < 1 ||
+            !Number.isFinite(Number(expense.amount)) ||
+            Number(expense.amount) <= 0 ||
+            !["Food", "Books", "Transport", "Entertainment", "Fees", "Other"].includes(expense.category) ||
+            typeof expense.date !== "string" ||
+            !/^\d{4}-\d{2}-\d{2}$/.test(expense.date) ||
+            Number.isNaN(Date.parse(expense.date)) ||
+            !["need", "want"].includes(expense.needWant);
+    });
+
+    throw new Error("Invalid record: " + JSON.stringify(invalidExpense));
+}
+
+            expenses = importedExpenses;
+            saveExpenses();
+            updateDashboard();
+            displayExpenses();
+
+            importStatus.textContent =
+                "Expenses imported successfully!";
+        } catch (error) {
+            importStatus.textContent =
+                "Import failed: " + error.message;
+        }
+    };
+
+    reader.readAsText(file);
+});
+
+// Update dashboard totals.
+function updateDashboard() {
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+
+    const startOfWeek = new Date(today);
+    const daysSinceMonday = (startOfWeek.getDay() + 6) % 7;
+
+    startOfWeek.setDate(startOfWeek.getDate() - daysSinceMonday);
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    let totalSpent = 0;
+    let weeklySpent = 0;
+    let monthlySpent = 0;
+
+    expenses.forEach(function (expense) {
+        const amount = Number(expense.amount);
+        const expenseDate = new Date(expense.date + "T00:00:00");
+
+        totalSpent += amount;
+
+        if (expenseDate >= startOfWeek && expenseDate <= today) {
+            weeklySpent += amount;
+        }
+
+        if (
+            expenseDate.getMonth() === currentMonth &&
+            expenseDate.getFullYear() === currentYear
+        ) {
+            monthlySpent += amount;
+        }
+    });
+
+    totalSpentElement.textContent = formatCurrency(totalSpent);
+    weeklySpentElement.textContent = formatCurrency(weeklySpent);
+    monthlySpentElement.textContent = formatCurrency(monthlySpent);
+
+// Display the monthly budget and remaining amount.
+monthlyBudgetElement.textContent = monthlyBudget > 0
+    ? formatCurrency(monthlyBudget)
+    : "Not set";
+
+const remaining = monthlyBudget - monthlySpent;
+
+budgetRemainingElement.textContent = monthlyBudget > 0
+    ? formatCurrency(remaining)
+    : "Not set";
+
+// Calculate average daily spending over the last 7 days.
+const sevenDaysAgo = new Date(today);
+sevenDaysAgo.setDate(today.getDate() - 6);
+sevenDaysAgo.setHours(0, 0, 0, 0);
+
+let lastSevenDaysSpent = 0;
+
+expenses.forEach(function (expense) {
+    const expenseDate = new Date(expense.date + "T00:00:00");
+
+    if (expenseDate >= sevenDaysAgo && expenseDate <= today) {
+        lastSevenDaysSpent += Number(expense.amount);
+    }
+});
+
+const dailyPace = lastSevenDaysSpent / 7;
+
+if (monthlyBudget <= 0) {
+    runwayDaysElement.textContent = "Set a budget";
+} else if (remaining <= 0) {
+    runwayDaysElement.textContent = "Budget reached";
+} else if (dailyPace === 0) {
+    runwayDaysElement.textContent = "Not enough spending data";
+
+} else {
+    runwayDaysElement.textContent =
+        Math.floor(remaining / dailyPace) + " days";
+}
+}
+
+// Handle submitted expenses.
+expenseForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const description = document.getElementById("expense-description").value.trim();
+    const amount = Number(document.getElementById("expense-amount").value);
+    const category = document.getElementById("expense-category").value;
+    const date = document.getElementById("expense-date").value;
+    const needWant = document.querySelector(
+        'input[name="needWant"]:checked'
+    );
+
+    if (!description || amount <= 0 || !category || !date || !needWant) {
+        alert("Please complete all expense fields correctly.");
+        return;
+    }
+
+    expenses.push({
+      id: Date.now().toString(),
+      description: description,
+      amount: amount,
+      category: category,
+      date: date,
+      needWant: needWant.value,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()  
+    });
+
+    saveExpenses();
+    updateDashboard();
+    displayExpenses();
+
+    alert("Expense saved successfully!");
+    expenseForm.reset();
+});
+
+function displayExpenses() {
+    const recordsSection = document.querySelector("#records");
+    const recordsMessage = recordsSection.querySelector("p");
+
+    const oldTable = recordsSection.querySelector("table");
+    if (oldTable) {
+        oldTable.remove();
+    }
+
+    // Start with all saved expenses.
+    let displayedExpenses = [...expenses];
+
+    // Search descriptions and categories.
+    const searchTerm = searchInput.value.trim();
+
+    if (searchTerm) {
+        try {
+            const searchPattern = new RegExp(searchTerm, "i");
+
+            displayedExpenses = displayedExpenses.filter(function (expense) {
+                return searchPattern.test(expense.description) ||
+                    searchPattern.test(expense.category);
+            });
+        } catch (error) {
+            recordsMessage.textContent =
+                "Invalid regular expression. Please check your search.";
+            return;
+        }
+    }
+
+    // Sort the displayed expenses.
+    const sortOption = sortSelect.value;
+if (sortOption === "newest") {
+    displayedExpenses.sort(function (a, b) {
+        const dateDifference = b.date.localeCompare(a.date);
+
+        if (dateDifference !== 0) {
+            return dateDifference;
+        }
+
+        return (b.createdAt || "").localeCompare(a.createdAt || "");
+    });
+} else if (sortOption === "oldest") {
+    displayedExpenses.sort(function (a, b) {
+        const dateDifference = a.date.localeCompare(b.date);
+
+        if (dateDifference !== 0) {
+            return dateDifference;
+        }
+
+        return (a.createdAt || "").localeCompare(b.createdAt || "");
+    });
+    
+    } else if (sortOption === "description") {
+        displayedExpenses.sort(function (a, b) {
+            return a.description.localeCompare(b.description);
+        });
+    } else if (sortOption === "amount-high") {
+        displayedExpenses.sort(function (a, b) {
+            return Number(b.amount) - Number(a.amount);
+        });
+    } else if (sortOption === "amount-low") {
+        displayedExpenses.sort(function (a, b) {
+            return Number(a.amount) - Number(b.amount);
+        });
+    }
+
+    if (displayedExpenses.length === 0) {
+        recordsMessage.textContent = searchTerm
+            ? "No matching expenses found."
+            : "Your transactions will appear here.";
+        return;
+    }
+
+function formatCurrency(amount) {
+    const convertedAmount = Number(amount) * exchangeRates[selectedCurrency];
+
+    return currencySymbols[selectedCurrency] + " " +
+        convertedAmount.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+}
+
+
+    recordsMessage.textContent = "";
+
+    const table = document.createElement("table");
+    const headerRow = table.insertRow();
+
+    const headings = [
+        "Date",
+        "Description",
+        "Category",
+        "Amount",
+        "Need/Want",
+        "Actions"
+    ];
+
+    headings.forEach(function (heading) {
+        const th = document.createElement("th");
+        th.textContent = heading;
+        th.scope = "col";
+        headerRow.appendChild(th);
+    });
+
+    displayedExpenses.forEach(function (expense) {
+        const row = table.insertRow();
+
+        const values = [
+            expense.date,
+            expense.description,
+            expense.category,
+            formatCurrency(expense.amount),
+            expense.needWant
+        ];
+
+        values.forEach(function (value) {
+            const cell = row.insertCell();
+            cell.textContent = value;
+        });
+
+        const actionsCell = row.insertCell();
+
+        const editButton = document.createElement("button");
+        editButton.textContent = "Edit";
+        editButton.type = "button";
+
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        deleteButton.type = "button";
+        deleteButton.addEventListener("click", function (){
+            const confirmed = confirm(
+                "Are you sure you want to delete this expense?"
+            );
+
+            if (!confirmed) {
+                return;
+
+            }
+            
+            expenses = expenses.filter(function (item) {
+                return item.id !== expense.id;
+
+            });
+
+            saveExpenses();
+            updateDashboard();
+            displayExpenses();
+
+        });
+
+            
+        editButton.addEventListener("click", function (){
+             const newDescription = prompt(
+                "Edit expense description:",
+                expense.description
+
+             );
+
+             if (newDescription === null || newDescription.trim() === ""){
+                return;
+             }
+
+             const newAmount = prompt(
+                "Edit expense amount:",
+                expense.amount
+
+
+            
+             );
+
+             if (newAmount === null){
+                return;
+
+             }
+
+             const amount = Number(newAmount);
+
+             if (!Number.isFinite(amount) || amount <= 0){
+                alert("Please enter a valid amount.");
+                return;
+
+             }
+
+             const expenseToEdit = expenses.find(function (item) {
+                return item.id === expense.id;
+             });
+
+             if (expenseToEdit) {
+                expenseToEdit.description = newDescription.trim();
+                expenseToEdit.amount = amount;
+                expenseToEdit.updatedAt = new Date().toISOString();
+
+                saveExpenses();
+                updateDashboard();
+                displayExpenses();
+
+             }
+
+
+        });
+        
+        actionsCell.appendChild(editButton);
+        actionsCell.appendChild(deleteButton);
+        
+    }
+    );
+
+    recordsSection.appendChild(table);
+}
+searchInput.addEventListener("input", displayExpenses);
+sortSelect.addEventListener("change", displayExpenses);
+
+// Save the monthly budget.
+budgetForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const amount = Number(budgetInput.value);
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+        alert("Please enter a valid budget greater than zero.");
+        return;
+    }
+
+    monthlyBudget = amount;
+
+    localStorage.setItem(
+        "runway:monthly-budget",
+        String(monthlyBudget)
+    );
+
+    updateDashboard();
+    alert("Monthly budget saved successfully!");
+});
+// Show saved totals and records when the page opens.
+updateDashboard();
+displayExpenses();
