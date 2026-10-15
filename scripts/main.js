@@ -1,6 +1,6 @@
 import { checkDescription, checkAmount, checkDate, checkCategory } from "./validators.js";
 
-console.log("Runway is ready!");
+console.log("Runway is ready");
 
 // Find the form and dashboard elements.
 const expenseForm = document.getElementById("expense-entry-form");
@@ -458,6 +458,7 @@ expenseForm.addEventListener("submit", function (event) {
     expenseForm.reset();
 });
 
+let editingId = null;
 function addHighlightedText(cell, text, pattern) {
     cell.textContent = "";
 
@@ -595,6 +596,113 @@ function formatCurrency(amount) {
 
     displayedExpenses.forEach(function (expense) {
         const row = table.insertRow();
+                if (expense.id === editingId) {
+            const dateCell = row.insertCell();
+            const dateInput = document.createElement("input");
+            dateInput.type = "date";
+            dateInput.value = expense.date;
+            dateInput.setAttribute("aria-label", "Edit date");
+            dateCell.appendChild(dateInput);
+
+            const descCell = row.insertCell();
+            const descInput = document.createElement("input");
+            descInput.type = "text";
+            descInput.value = expense.description;
+            descInput.setAttribute("aria-label", "Edit description");
+            descCell.appendChild(descInput);
+
+            const catCell = row.insertCell();
+            const catSelect = document.createElement("select");
+            catSelect.setAttribute("aria-label", "Edit category");
+            ["Food", "Books", "Transport", "Entertainment", "Fees", "Other"].forEach(function (name) {
+                const option = document.createElement("option");
+                option.value = name;
+                option.textContent = name;
+                if (name === expense.category) {
+                    option.selected = true;
+                }
+                catSelect.appendChild(option);
+            });
+            catCell.appendChild(catSelect);
+
+            const amountCell = row.insertCell();
+            const amountInput = document.createElement("input");
+            amountInput.type = "text";
+            amountInput.value = expense.amount;
+            amountInput.setAttribute("aria-label", "Edit amount in RWF");
+            amountCell.appendChild(amountInput);
+
+            const needCell = row.insertCell();
+            const needSelect = document.createElement("select");
+            needSelect.setAttribute("aria-label", "Edit need or want");
+            ["need", "want"].forEach(function (name) {
+                const option = document.createElement("option");
+                option.value = name;
+                option.textContent = name;
+                if (name === expense.needWant) {
+                    option.selected = true;
+                }
+                needSelect.appendChild(option);
+            });
+            needCell.appendChild(needSelect);
+
+            const buttonCell = row.insertCell();
+
+            const saveButton = document.createElement("button");
+            saveButton.textContent = "Save";
+            saveButton.type = "button";
+
+            const cancelButton = document.createElement("button");
+            cancelButton.textContent = "Cancel";
+            cancelButton.type = "button";
+
+            const errorLine = document.createElement("small");
+            errorLine.className = "error-message";
+            errorLine.setAttribute("aria-live", "polite");
+
+            saveButton.addEventListener("click", function () {
+                const error = checkDescription(descInput.value) ||
+                    checkAmount(amountInput.value) ||
+                    checkDate(dateInput.value) ||
+                    checkCategory(catSelect.value);
+
+                if (error) {
+                    errorLine.textContent = error;
+                    return;
+                }
+
+                const expenseToEdit = expenses.find(function (item) {
+                    return item.id === expense.id;
+                });
+
+                if (expenseToEdit) {
+                    expenseToEdit.description = descInput.value;
+                    expenseToEdit.amount = Number(amountInput.value);
+                    expenseToEdit.category = catSelect.value;
+                    expenseToEdit.date = dateInput.value;
+                    expenseToEdit.needWant = needSelect.value;
+                    expenseToEdit.updatedAt = new Date().toISOString();
+                }
+
+                editingId = null;
+                saveExpenses();
+                updateDashboard();
+                displayExpenses();
+            });
+
+            cancelButton.addEventListener("click", function () {
+                editingId = null;
+                displayExpenses();
+            });
+
+            buttonCell.append(saveButton, cancelButton, errorLine);
+
+            setTimeout(function () {
+                descInput.focus();
+            }, 0);
+
+            return;
+        }
 
         const values = [
             expense.date,
@@ -643,57 +751,11 @@ function formatCurrency(amount) {
             displayExpenses();
 
         });
-
             
-        editButton.addEventListener("click", function (){
-             const newDescription = prompt(
-                "Edit expense description:",
-                expense.description
-
-             );
-
-             if (newDescription === null || newDescription.trim() === ""){
-                return;
-             }
-
-             const newAmount = prompt(
-                "Edit expense amount:",
-                expense.amount
-
-
-            
-             );
-
-             if (newAmount === null){
-                return;
-
-             }
-
-             const amount = Number(newAmount);
-
-             if (!Number.isFinite(amount) || amount <= 0){
-                alert("Please enter a valid amount.");
-                return;
-
-             }
-
-             const expenseToEdit = expenses.find(function (item) {
-                return item.id === expense.id;
-             });
-
-             if (expenseToEdit) {
-                expenseToEdit.description = newDescription.trim();
-                expenseToEdit.amount = amount;
-                expenseToEdit.updatedAt = new Date().toISOString();
-
-                saveExpenses();
-                updateDashboard();
-                displayExpenses();
-             }
-
-
+         editButton.addEventListener("click", function () {
+            editingId = expense.id;
+            displayExpenses();
         });
-        
         actionsCell.appendChild(editButton);
         actionsCell.appendChild(deleteButton);
         
