@@ -7,7 +7,7 @@
     <meta name="description" content="Runway helps students understand and manage their spending.">
     <title>Runway | Student Finance Tracker</title>
     <link rel="stylesheet" href="styles/main.css">
-    <script src="scripts/main.js" defer></script>
+    <script type="module" src="scripts/main.js"></script>
 </head>
 <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -139,70 +139,54 @@
     <h2 id="expense-title">Add an Expense</h2>
     <p>Record your spending to understand where your money goes.</p>
 
-    <form id="expense-entry-form">
-        <div class="form-group">
-            <label for="expense-description">Description</label>
-            <input
-                type="text"
-                id="expense-description"
-                name="description"
-                placeholder="e.g. Lunch"
-                required
-            >
-        </div>
+   <form id="expense-entry-form" novalidate>
+    <div class="form-group">
+        <label for="expense-description">Description</label>
+        <input type="text" id="expense-description" name="description" placeholder="e.g. Lunch">
+        <small class="error-message" id="description-error" aria-live="polite"></small>
+    </div>
 
-        <div class="form-group">
-            <label for="expense-amount">Amount</label>
-            <input
-                type="number"
-                id="expense-amount"
-                name="amount"
-                min="0.01"
-                step="0.01"
-                placeholder="Enter amount"
-                required
-            >
-        </div>
+    <div class="form-group">
+        <label for="expense-amount">Amount</label>
+        <input type="number" id="expense-amount" name="amount" step="0.01" placeholder="Enter amount">
+        <small class="error-message" id="amount-error" aria-live="polite"></small>
+    </div>
 
-        <div class="form-group">
-            <label for="expense-category">Category</label>
-            <select id="expense-category" name="category" required>
-                <option value="">Choose a category</option>
-                <option value="Food">Food</option>
-                <option value="Books">Books</option>
-                <option value="Transport">Transport</option>
-                <option value="Entertainment">Entertainment</option>
-                <option value="Fees">Fees</option>
-                <option value="Other">Other</option>
-            </select>
-        </div>
+    <div class="form-group">
+        <label for="expense-category">Category</label>
+        <select id="expense-category" name="category">
+            <option value="">Choose a category</option>
+            <option value="Food">Food</option>
+            <option value="Books">Books</option>
+            <option value="Transport">Transport</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Fees">Fees</option>
+            <option value="Other">Other</option>
+        </select>
+        <small class="error-message" id="category-error" aria-live="polite"></small>
+    </div>
 
-        <div class="form-group">
-            <label for="expense-date">Date</label>
-            <input
-                type="date"
-                id="expense-date"
-                name="date"
-                required
-            >
-        </div>
+    <div class="form-group">
+        <label for="expense-date">Date</label>
+        <input type="date" id="expense-date" name="date">
+        <small class="error-message" id="date-error" aria-live="polite"></small>
+    </div>
 
-        <fieldset class="form-group">
-            <legend>Is this a need or a want?</legend>
+    <fieldset class="form-group">
+        <legend>Is this a need or a want?</legend>
+        <label>
+            <input type="radio" name="needWant" value="need">
+            Need
+        </label>
+        <label>
+            <input type="radio" name="needWant" value="want">
+            Want
+        </label>
+        <small class="error-message" id="needwant-error" aria-live="polite"></small>
+    </fieldset>
 
-            <label>
-                <input type="radio" name="needWant" value="need" required>
-                Need
-            </label>
-
-            <label>
-                <input type="radio" name="needWant" value="want">
-                Want
-            </label>
-        </fieldset>
-
-        <button type="submit">Save Expense</button>
-    </form>
+    <button type="submit">Save Expense</button>
+</form> 
 </section>
 
        <section id="settings" aria-labelledby="settings-title">

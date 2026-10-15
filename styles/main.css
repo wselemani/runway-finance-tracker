@@ -409,3 +409,11 @@ button:hover {
     font-weight: bold;
     white-space: nowrap;
 }
+
+.error-message {
+    display: block;
+    color: #B3261E;
+    font-weight: bold;
+    min-height: 1.2em;
+
+}

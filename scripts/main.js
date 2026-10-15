@@ -1,3 +1,4 @@
+import { checkDescription, checkAmount, checkDate, checkCategory } from "./validators.js";
 
 console.log("Runway is ready!");
 
@@ -287,11 +288,24 @@ expenseForm.addEventListener("submit", function (event) {
         'input[name="needWant"]:checked'
     );
 
-    if (!description || amount <= 0 || !category || !date || !needWant) {
-        alert("Please complete all expense fields correctly.");
+    const rawDescription = document.getElementById("expense-description").value;
+    const amountText = document.getElementById("expense-amount").value;
+
+    const descriptionError = checkDescription(rawDescription);
+    const amountError = checkAmount(amountText);
+    const categoryError = checkCategory(category);
+    const dateError = checkDate(date);
+    const needWantError = needWant ? "" : "Please choose Need or Want.";
+
+    document.getElementById("description-error").textContent = descriptionError;
+    document.getElementById("amount-error").textContent = amountError;
+    document.getElementById("category-error").textContent = categoryError;
+    document.getElementById("date-error").textContent = dateError;
+    document.getElementById("needwant-error").textContent = needWantError;
+
+    if (descriptionError || amountError || categoryError || dateError || needWantError) {
         return;
     }
-
     expenses.push({
       id: Date.now().toString(),
       description: description,
