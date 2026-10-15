@@ -88,6 +88,7 @@ updateCurrencySelection();
 
 const searchInput = document.getElementById("expense-search");
 const sortSelect = document.getElementById("sort-expenses");
+const caseToggle = document.getElementById("case-toggle");
 
 // Save expenses in the browser.
 function saveExpenses() {
@@ -325,6 +326,32 @@ expenseForm.addEventListener("submit", function (event) {
     expenseForm.reset();
 });
 
+function addHighlightedText(cell, text, pattern) {
+    cell.textContent = "";
+
+    if (!pattern) {
+        cell.textContent = text;
+        return;
+    }
+
+    let lastIndex = 0;
+
+    for (const match of text.matchAll(pattern)) {
+        if (match[0] === "") {
+            continue;
+        }
+
+        cell.append(text.slice(lastIndex, match.index));
+
+        const mark = document.createElement("mark");
+        mark.textContent = match[0];
+        cell.append(mark);
+
+        lastIndex = match.index + match[0].length;
+    }
+
+    cell.append(text.slice(lastIndex));
+}
 function displayExpenses() {
     const recordsSection = document.querySelector("#records");
     const recordsMessage = recordsSection.querySelector("p");
@@ -338,11 +365,14 @@ function displayExpenses() {
     let displayedExpenses = [...expenses];
 
     // Search descriptions and categories.
-    const searchTerm = searchInput.value.trim();
+        const searchTerm = searchInput.value.trim();
+    const flags = caseToggle.checked ? "i" : "";
+    let highlightPattern = null;
 
     if (searchTerm) {
         try {
-            const searchPattern = new RegExp(searchTerm, "i");
+            const searchPattern = new RegExp(searchTerm, flags);
+            highlightPattern = new RegExp(searchTerm, flags + "g");
 
             displayedExpenses = displayedExpenses.filter(function (expense) {
                 return searchPattern.test(expense.description) ||
@@ -442,9 +472,14 @@ function formatCurrency(amount) {
             expense.needWant
         ];
 
-        values.forEach(function (value) {
+               values.forEach(function (value, index) {
             const cell = row.insertCell();
-            cell.textContent = value;
+
+            if (index === 1 || index === 2) {
+                addHighlightedText(cell, value, highlightPattern);
+            } else {
+                cell.textContent = value;
+            }
         });
 
         const actionsCell = row.insertCell();
@@ -522,7 +557,6 @@ function formatCurrency(amount) {
                 saveExpenses();
                 updateDashboard();
                 displayExpenses();
-
              }
 
 
@@ -538,6 +572,7 @@ function formatCurrency(amount) {
 }
 searchInput.addEventListener("input", displayExpenses);
 sortSelect.addEventListener("change", displayExpenses);
+caseToggle.addEventListener("change", displayExpenses);
 
 // Save the monthly budget.
 budgetForm.addEventListener("submit", function (event) {

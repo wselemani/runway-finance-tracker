@@ -417,3 +417,22 @@ button:hover {
     min-height: 1.2em;
 
 }
+
+mark {
+    background: var(--gold);
+    color: var(--black);
+    padding: 0 2px;
+    border-radius: 3px;
+}
+
+.check-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: normal;
+}
+
+#records input[type="checkbox"] {
+    width: auto;
+    min-height: 0;
+}
