@@ -223,6 +223,17 @@ caseToggle.addEventListener("change", displayExpenses);./validators.js";
             <p id="currency-status" role="status" aria-live="polite">
                 Current currency: RWF
             </p>
+            <h4>Exchange rates</h4>
+<p>How much 1 RWF is worth in each currency.</p>
+
+<label for="rate-usd">1 RWF in USD</label>
+<input type="number" id="rate-usd" min="0" step="any">
+
+<label for="rate-mwk">1 RWF in MWK</label>
+<input type="number" id="rate-mwk" min="0" step="any">
+
+<button type="button" id="save-rates">Save Rates</button>
+<p id="rates-status" role="status" aria-live="polite"></p>
         </div>
 
         <div class="form-group">

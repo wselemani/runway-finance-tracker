@@ -33,11 +33,10 @@ const currencySymbols = {
 };
 
 // Temporary example rates; we can adjust them later.
-const exchangeRates = {
-    RWF: 1,
-    USD: 0.0007,
-    MWK: 1.1
-};
+const exchangeRates = Object.assign(
+    { RWF: 1, USD: 0.0007, MWK: 1.1 },
+    JSON.parse(localStorage.getItem("runway:rates")) || {}
+);
 
 let selectedCurrency = localStorage.getItem("runway:currency") || "RWF";
 
@@ -85,6 +84,34 @@ if (currencySelect) {
 
 updateCurrencySelection();
 
+const rateUsdInput = document.getElementById("rate-usd");
+const rateMwkInput = document.getElementById("rate-mwk");
+const ratesStatus = document.getElementById("rates-status");
+
+rateUsdInput.value = exchangeRates.USD;
+rateMwkInput.value = exchangeRates.MWK;
+
+document.getElementById("save-rates").addEventListener("click", function () {
+    const usd = Number(rateUsdInput.value);
+    const mwk = Number(rateMwkInput.value);
+
+    if (!(usd > 0) || !(mwk > 0)) {
+        ratesStatus.textContent = "Rates must be numbers greater than zero.";
+        return;
+    }
+
+    exchangeRates.USD = usd;
+    exchangeRates.MWK = mwk;
+
+    localStorage.setItem(
+        "runway:rates",
+        JSON.stringify({ USD: usd, MWK: mwk })
+    );
+
+    updateDashboard();
+    displayExpenses();
+    ratesStatus.textContent = "Rates saved.";
+});
 
 const searchInput = document.getElementById("expense-search");
 const sortSelect = document.getElementById("sort-expenses");
