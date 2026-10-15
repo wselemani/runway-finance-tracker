@@ -198,8 +198,113 @@ const validExpenses = importedExpenses.every(function (expense) {
     reader.readAsText(file);
 });
 
+function updateTrend() {
+    const chart = document.getElementById("trend-chart");
+    chart.textContent = "";
+
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const today = new Date();
+    const days = [];
+
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+
+        const key = d.getFullYear() + "-" +
+            String(d.getMonth() + 1).padStart(2, "0") + "-" +
+            String(d.getDate()).padStart(2, "0");
+
+        days.push({ key: key, label: dayNames[d.getDay()], total: 0 });
+    }
+
+    expenses.forEach(function (expense) {
+        const day = days.find(function (item) {
+            return item.key === expense.date;
+        });
+
+        if (day) {
+            day.total += Number(expense.amount);
+        }
+    });
+
+    const biggest = Math.max(...days.map(function (item) {
+        return item.total;
+    }), 1);
+
+    days.forEach(function (day) {
+        const column = document.createElement("div");
+        column.className = "trend-col";
+
+        const value = document.createElement("span");
+              value.textContent = day.total > 0 ? formatCurrency(day.total) : "";
+
+        const bar = document.createElement("div");
+        bar.className = "trend-bar";
+        bar.style.height = Math.round((day.total / biggest) * 100) + "px";
+        bar.title = day.label + ": " + formatCurrency(day.total);
+
+        const label = document.createElement("span");
+        label.textContent = day.label;
+
+        column.append(value, bar, label);
+        chart.append(column);
+    });
+}
+function updateExtraStats() {
+    updateTrend();
+    document.getElementById("record-count").textContent = expenses.length;
+
+    // Find the category with the most spending.
+    const totals = {};
+    expenses.forEach(function (expense) {
+        totals[expense.category] =
+            (totals[expense.category] || 0) + Number(expense.amount);
+    });
+
+    let topCategory = "None yet";
+    let topAmount = 0;
+
+    for (const name in totals) {
+        if (totals[name] > topAmount) {
+            topAmount = totals[name];
+            topCategory = name;
+        }
+    }
+
+    document.getElementById("top-category").textContent = topCategory;
+
+    // Budget message.
+    const message = document.getElementById("budget-message");
+    const now = new Date();
+    let monthTotal = 0;
+
+    expenses.forEach(function (expense) {
+        const d = new Date(expense.date + "T00:00:00");
+
+        if (d.getMonth() === now.getMonth() &&
+            d.getFullYear() === now.getFullYear()) {
+            monthTotal += Number(expense.amount);
+        }
+    });
+
+    if (monthlyBudget <= 0) {
+        message.textContent = "";
+        return;
+    }
+
+    if (monthTotal > monthlyBudget) {
+        message.setAttribute("aria-live", "assertive");
+        message.textContent =
+            "Over budget by " + formatCurrency(monthTotal - monthlyBudget) + ".";
+    } else {
+        message.setAttribute("aria-live", "polite");
+        message.textContent =
+            "You have " + formatCurrency(monthlyBudget - monthTotal) + " left this month.";
+    }
+}
 // Update dashboard totals.
 function updateDashboard() {
+        updateExtraStats();
     const today = new Date();
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
