@@ -1,16 +1,194 @@
-<!DocTYPE html>
-<html lang="en"
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="UTF">
-    <meta name="viewpoint" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Runway Tests</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 24px; line-height: 1.5; color: #1b1b1b; background: #ffffff; }
+        main { max-width: 900px; margin: 0 auto; }
+        #summary { font-weight: bold; padding: 12px 16px; border: 2px solid #444444; border-radius: 8px; }
+        #summary.ok { border-color: #1a6b2f; }
+        #summary.bad { border-color: #b3261e; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin: 8px 0 28px; }
+        th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #cccccc; }
+        th { background: #f0f0f0; }
+        .pass { color: #1a6b2f; font-weight: bold; }
+        .fail { color: #b3261e; font-weight: bold; }
+    </style>
 </head>
 <body>
     <main>
         <h1>Runway Tests</h1>
-        <p>Testing page for the Runway Student Finance Tracker</p>
+        <p>Testing page for the Runway Student Finance Tracker. Serve the project with Live Server or GitHub Pages so the JavaScript modules can load.</p>
 
+        <p id="summary" role="status">Running tests...</p>
 
+        <div id="results"></div>
     </main>
+
+    <script type="module">
+        import { checkDescription, checkAmount, checkDate, checkCategory } from "./scripts/validators.js";
+
+        // Each case is [input, shouldBeValid].
+        const suites = [
+            {
+                name: "checkDescription",
+                fn: checkDescription,
+                cases: [
+                    ["Lunch", true],
+                    ["Bus fare to town", true],
+                    ["Notebook (A4)", true],
+                    [" Lunch", false],
+                    ["Lunch ", false],
+                    ["", false],
+                    ["   ", false],
+                    ["Lunch lunch", false]
+                ]
+            },
+            {
+                name: "checkAmount",
+                fn: checkAmount,
+                cases: [
+                    ["12", true],
+                    ["12.50", true],
+                    ["0.5", true],
+                    ["1000000", true],
+                    ["0", false],
+                    ["0.00", false],
+                    ["-5", false],
+                    ["12.345", false],
+                    ["abc", false],
+                    ["", false],
+                    ["007", false],
+                    [".5", false]
+                ]
+            },
+            {
+                name: "checkDate",
+                fn: checkDate,
+                cases: [
+                    ["2026-10-17", true],
+                    ["2026-12-31", true],
+                    ["2026-13-01", false],
+                    ["2026-00-10", false],
+                    ["2026-10-32", false],
+                    ["17-10-2026", false],
+                    ["", false]
+                ]
+            },
+            {
+                name: "checkCategory",
+                fn: checkCategory,
+                cases: [
+                    ["Food", true],
+                    ["Fees", true],
+                    ["Mobile-data", true],
+                    ["Food Drink", true],
+                    ["", false],
+                    ["Food2", false],
+                    [" Food", false],
+                    ["Food  Drink", false]
+                ]
+            }
+        ];
+
+        const results = document.getElementById("results");
+        const summary = document.getElementById("summary");
+        let total = 0;
+        let failed = 0;
+
+        function runSuite(suite) {
+            const heading = document.createElement("h2");
+            heading.textContent = suite.name;
+
+            const wrap = document.createElement("div");
+            wrap.className = "table-wrap";
+
+            const table = document.createElement("table");
+            const headerRow = table.createTHead().insertRow();
+
+            ["Input", "Expected", "Validator message", "Result"].forEach(function (text) {
+                const th = document.createElement("th");
+                th.scope = "col";
+                th.textContent = text;
+                headerRow.append(th);
+            });
+
+            const body = table.createTBody();
+
+            suite.cases.forEach(function (testCase) {
+                const input = testCase[0];
+                const expectValid = testCase[1];
+                const message = suite.fn(input);
+                const isValid = message === "";
+                const passed = isValid === expectValid;
+
+                total++;
+                if (!passed) {
+                    failed++;
+                }
+
+                const row = body.insertRow();
+                row.insertCell().textContent = JSON.stringify(input);
+                row.insertCell().textContent = expectValid ? "valid" : "invalid";
+                row.insertCell().textContent = message || "(no error)";
+
+                const resultCell = row.insertCell();
+                resultCell.textContent = passed ? "PASS" : "FAIL";
+                resultCell.className = passed ? "pass" : "fail";
+            });
+
+            wrap.append(table);
+            results.append(heading, wrap);
+        }
+
+        async function runSeedCheck() {
+            const heading = document.createElement("h2");
+            heading.textContent = "seed.json";
+
+            const status = document.createElement("p");
+            total++;
+
+            try {
+                const response = await fetch("./seed.json");
+                const records = await response.json();
+
+                const bad = records.filter(function (record) {
+                    return checkDescription(record.description) ||
+                        checkAmount(String(record.amount)) ||
+                        checkDate(record.date) ||
+                        checkCategory(record.category) ||
+                        !["need", "want"].includes(record.needWant);
+                });
+
+                if (bad.length > 0) {
+                    failed++;
+                    status.className = "fail";
+                    status.textContent = "FAIL: invalid records: " +
+                        bad.map(function (record) { return record.id; }).join(", ");
+                } else {
+                    status.className = "pass";
+                    status.textContent = "PASS: all " + records.length +
+                        " seed records pass the validators.";
+                }
+            } catch (error) {
+                failed++;
+                status.className = "fail";
+                status.textContent = "FAIL: could not load seed.json (" + error.message + ")";
+            }
+
+            results.append(heading, status);
+        }
+
+        suites.forEach(runSuite);
+        await runSeedCheck();
+
+        summary.textContent = failed === 0
+            ? "All " + total + " tests passed."
+            : failed + " of " + total + " tests failed.";
+        summary.className = failed === 0 ? "ok" : "bad";
+    </script>
 </body>
 </html>
