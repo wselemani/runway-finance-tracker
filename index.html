@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,257 +12,263 @@
 <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>
 
-    
-<aside class="sidebar">
-    <a class="brand" href="#about" aria-label="Runway home">
-        <span class="brand-icon" aria-hidden="true">R</span>
-        <span class="brand-name">Runway</span>
-    </a>
+    <header class="sidebar">
+        <a class="brand" href="#about" aria-label="Runway home">
+            <span class="brand-icon" aria-hidden="true">R</span>
+            <span class="brand-name">Runway</span>
+        </a>
 
-    <nav aria-label="Main navigation">
-        <ul class="nav-list">
-            <li>
-                <a href="#dashboard" aria-label="Dashboard" title="Dashboard">
-                    <span aria-hidden="true">⌂</span>
-                </a>
-            </li>
-            <li>
-                <a href="#records" aria-label="Transactions" title="Transactions">
-                    <span aria-hidden="true">▤</span>
-                </a>
-            </li>
-            <li>
-                <a href="#expense-form" aria-label="Add Expense" title="Add Expense">
-                    <span aria-hidden="true">＋</span>
-                </a>
-            </li>
-            <li>
-                <a href="#dashboard" aria-label="Spending Insights" title="Spending Insights">
-                    <span aria-hidden="true">▥</span>
-                </a>
-            </li>
-            <li>
-                <a href="#settings" aria-label="Settings" title="Settings">
-                    <span aria-hidden="true">⚙</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+        <nav aria-label="Main navigation">
+            <ul class="nav-list">
+                <li>
+                    <a href="#dashboard" aria-label="Dashboard" title="Dashboard">
+                        <span aria-hidden="true">⌂</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#records" aria-label="Transactions" title="Transactions">
+                        <span aria-hidden="true">▤</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#expense-form" aria-label="Add Expense" title="Add Expense">
+                        <span aria-hidden="true">＋</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#dashboard" aria-label="Spending Insights" title="Spending Insights">
+                        <span aria-hidden="true">▥</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#settings" aria-label="Settings" title="Settings">
+                        <span aria-hidden="true">⚙</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
 
-    <div class="sidebar-currency">
-        <span aria-hidden="true">¤</span>
-        <p>Currency</p>
-        <strong>RWF</strong>
-    </div>
-</aside>
-
+        <div class="sidebar-currency">
+            <span aria-hidden="true">¤</span>
+            <p>Currency</p>
+            <strong>RWF</strong>
+        </div>
+    </header>
 
     <main id="main-content">
         <section id="about" aria-labelledby="about-title">
             <h1 id="about-title">Know how far your money goes.</h1>
             <p>Runway helps students understand their spending and make informed financial decisions.</p>
-                  <P>
+            <p>
                 Contact:
                 <a href="https://github.com/wselemani">GitHub: wselemani</a>
                 |
                 <a href="mailto:selemaniwezzie5@gmail.com">selemaniwezzie5@gmail.com</a>
             </p>
         </section>
+
         <section id="dashboard" aria-labelledby="dashboard-title">
-        <h2 id="dashboard-title">Your Dashboard</h2>
-     <p>Track your spending, review your expenses, and plan your budget.</p>
-    <div class="dashboard-summary">
-        <article class="summary-card">
-            <h3>Total Spent</h3>
-            <p id="total-spent">2</p>
-        </article>
+            <h2 id="dashboard-title">Your Dashboard</h2>
+            <p>Track your spending, review your expenses, and plan your budget.</p>
 
-        <article class="summary-card">
-            <h3>Weekly Spending</h3>
-            <p id="weekly-spent">2</p>
-        </article>
+            <div class="dashboard-summary">
+                <article class="summary-card">
+                    <h3>Total Spent</h3>
+                    <p id="total-spent">0</p>
+                </article>
 
-        <article class="summary-card">
-            <h3>Monthly Spending</h3>
-            <p id="monthly-spent">2</p>
-        </article>
-       <article class="summary-card">
-    <h3>Monthly Budget</h3>
-    <p id="monthly-budget">Not set</p>
+                <article class="summary-card">
+                    <h3>Weekly Spending</h3>
+                    <p id="weekly-spent">0</p>
+                </article>
 
-    <form id="budget-form">
-        <label for="budget-amount">Set your monthly limit</label>
-        <input
-            type="number"
-            id="budget-amount"
-            min="0.01"
-            step="0.01"
+                <article class="summary-card">
+                    <h3>Monthly Spending</h3>
+                    <p id="monthly-spent">0</p>
+                </article>
 
-            required
-        >
-        <button type="submit">Save Budget</button>
-        <p id="budget-status" role="status"></p>
-    </form>
+                <article class="summary-card">
+                    <h3>Monthly Budget</h3>
+                    <p id="monthly-budget">Not set</p>
 
-    <p>Remaining: <span id="budget-remaining">Not set</span></p>
-    <p id="budget-message-polite" role="status"></p>
-    <p id="budget-message-alert" role="alert"></p>
-</article>
+                    <form id="budget-form">
+                        <label for="budget-amount">Set your monthly limit (RWF)</label>
+                        <input
+                            type="number"
+                            id="budget-amount"
+                            min="0.01"
+                            step="0.01"
+                            required
+                        >
+                        <button type="submit">Save Budget</button>
+                        <p id="budget-status" role="status"></p>
+                    </form>
 
-    <article class="summary-card">
-        <h3>Estimated Days Remaining</h3>
-        <p id="runway-days">Set a budget</p>
-    </article>
-     <article class="summary-card">
-    <h3>Total Records</h3>
-    <p id="record-count">0</p>
-     </article>
+                    <p>Remaining: <span id="budget-remaining">Not set</span></p>
+                    <p id="budget-message-polite" role="status"></p>
+                    <p id="budget-message-alert" role="alert"></p>
+                </article>
 
-<article class="summary-card">
-    <h3>Top Category</h3>
-    <p id="top-category">None yet</p>
-</article>
-<h3>Last 7 Days</h3>
-<div class="trend-chart" id="trend-chart" role="group" aria-label="Bar chart of spending over the last 7 days"></div>
-     </div>
+                <article class="summary-card">
+                    <h3>Estimated Days Remaining</h3>
+                    <p id="runway-days">Set a budget</p>
+                </article>
+
+                <article class="summary-card">
+                    <h3>Total Records</h3>
+                    <p id="record-count">0</p>
+                </article>
+
+                <article class="summary-card">
+                    <h3>Top Category</h3>
+                    <p id="top-category">None yet</p>
+                </article>
+
+                <h3>Last 7 Days</h3>
+                <div class="trend-chart" id="trend-chart" role="group" aria-label="Bar chart of spending over the last 7 days"></div>
+            </div>
         </section>
-<section id="records" aria-labelledby="records-title">
-    <h2 id="records-title">Expense Records</h2>
 
-    <p>Your transactions will appear here.</p>
+        <section id="records" aria-labelledby="records-title">
+            <h2 id="records-title" tabindex="-1">Expense Records</h2>
 
-    <div class="form-group">
-        <label for="expense-search">Search expenses</label>
-        <input
-            type="search"
-            id="expense-search"
-            placeholder="Search descriptions or categories"
-            aria-describedby="search-help"
-        >
-        <small id="search-help">
-            Enter a word or regular expression to find expenses.
-        </small>
-        <label class="check-label">
-    <input type="checkbox" id="case-toggle" checked>
-    Ignore uppercase and lowercase
-</label>
-    </div>
+            <p id="records-message" aria-live="polite">Your transactions will appear here.</p>
 
-    <div class="form-group">
-        <label for="sort-expenses">Sort expenses by</label>
-        <select id="sort-expenses">
-            <option value="newest">Newest first</option>
-            <option value="oldest">Oldest first</option>
-            <option value="description">Description (A–Z)</option>
-            <option value="amount-high">Amount (highest first)</option>
-            <option value="amount-low">Amount (lowest first)</option>
-        </select>
-    </div>
-</section>    
-<section id="expense-form" aria-labelledby="expense-title">
-    <h2 id="expense-title">Add an Expense</h2>
-    <p>Record your spending to understand where your money goes.</p>
+            <div class="form-group">
+                <label for="expense-search">Search expenses</label>
+                <input
+                    type="search"
+                    id="expense-search"
+                    placeholder="Search description, category, amount or date"
+                    aria-describedby="search-help"
+                >
+                <small id="search-help">
+                    Enter a word or regular expression to find expenses.
+                </small>
+                <label class="check-label">
+                    <input type="checkbox" id="case-toggle" checked>
+                    Ignore uppercase and lowercase
+                </label>
+            </div>
 
-   <form id="expense-entry-form" novalidate>
-    <div class="form-group">
-        <label for="expense-description">Description</label>
-        <input type="text" id="expense-description" name="description" placeholder="e.g. Lunch">
-        <small class="error-message" id="description-error" aria-live="polite"></small>
-    </div>
+            <div class="form-group">
+                <label for="sort-expenses">Sort expenses by</label>
+                <select id="sort-expenses">
+                    <option value="newest">Newest first</option>
+                    <option value="oldest">Oldest first</option>
+                    <option value="description">Description (A–Z)</option>
+                    <option value="amount-high">Amount (highest first)</option>
+                    <option value="amount-low">Amount (lowest first)</option>
+                </select>
+            </div>
+        </section>
 
-    <div class="form-group">
-        <label for="expense-amount">Amount</label>
-        <input type="number" id="expense-amount" name="amount" step="0.01" placeholder="Enter amount">
-        <small class="error-message" id="amount-error" aria-live="polite"></small>
-    </div>
+        <section id="expense-form" aria-labelledby="expense-title">
+            <h2 id="expense-title">Add an Expense</h2>
+            <p>Record your spending to understand where your money goes.</p>
 
-    <div class="form-group">
-        <label for="expense-category">Category</label>
-        <select id="expense-category" name="category">
-            <option value="">Choose a category</option>
-            <option value="Food">Food</option>
-            <option value="Books">Books</option>
-            <option value="Transport">Transport</option>
-            <option value="Entertainment">Entertainment</option>
-            <option value="Fees">Fees</option>
-            <option value="Other">Other</option>
-        </select>
-        <small class="error-message" id="category-error" aria-live="polite"></small>
-    </div>
-
-    <div class="form-group">
-        <label for="expense-date">Date</label>
-        <input type="date" id="expense-date" name="date">
-        <small class="error-message" id="date-error" aria-live="polite"></small>
-    </div>
-
-    <fieldset class="form-group">
-        <legend>Is this a need or a want?</legend>
-        <label>
-            <input type="radio" name="needWant" value="need">
-            Need
-        </label>
-        <label>
-            <input type="radio" name="needWant" value="want">
-            Want
-        </label>
-        <small class="error-message" id="needwant-error" aria-live="polite"></small>
-    </fieldset>
-
-    <button type="submit">Save Expense</button>
-    <p id="form-status" role="status"></p>
-</form> 
-</section>
-
-       <section id="settings" aria-labelledby="settings-title">
-        <h2 id="settings-title">Settings</h2>
-        <p>Manage your finance tracker data and preferences.</p>
+            <form id="expense-entry-form" novalidate>
                 <div class="form-group">
-            <h3>Currency</h3>
-            <p>Choose the currency for your expenses and budget.</p>
+                    <label for="expense-description">Description</label>
+                    <input type="text" id="expense-description" name="description" placeholder="e.g. Lunch">
+                    <small class="error-message" id="description-error" aria-live="polite"></small>
+                </div>
 
-            <label for="currency-select">Display currency</label>
-            <select id="currency-select">
-                <option value="RWF">RWF — Rwandan franc</option>
-                <option value="USD">USD — US dollar</option>
-                <option value="MWK">MWK — Malawian kwacha</option>
-            </select>
+                <div class="form-group">
+                    <label for="expense-amount">Amount (RWF)</label>
+                    <input type="number" id="expense-amount" name="amount" step="0.01" placeholder="Enter amount">
+                    <small class="error-message" id="amount-error" aria-live="polite"></small>
+                </div>
 
-            <p id="currency-status" role="status" aria-live="polite">
-                Current currency: RWF
-            </p>
-            <h4>Exchange rates</h4>
-<p>How much 1 RWF is worth in each currency.</p>
+                <div class="form-group">
+                    <label for="expense-category">Category</label>
+                    <select id="expense-category" name="category">
+                        <option value="">Choose a category</option>
+                        <option value="Food">Food</option>
+                        <option value="Books">Books</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Fees">Fees</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <small class="error-message" id="category-error" aria-live="polite"></small>
+                </div>
 
-<label for="rate-usd">1 RWF in USD</label>
-<input type="number" id="rate-usd" min="0" step="any">
+                <div class="form-group">
+                    <label for="expense-date">Date</label>
+                    <input type="date" id="expense-date" name="date">
+                    <small class="error-message" id="date-error" aria-live="polite"></small>
+                </div>
 
-<label for="rate-mwk">1 RWF in MWK</label>
-<input type="number" id="rate-mwk" min="0" step="any">
+                <fieldset class="form-group">
+                    <legend>Is this a need or a want?</legend>
+                    <label>
+                        <input type="radio" name="needWant" value="need">
+                        Need
+                    </label>
+                    <label>
+                        <input type="radio" name="needWant" value="want">
+                        Want
+                    </label>
+                    <small class="error-message" id="needwant-error" aria-live="polite"></small>
+                </fieldset>
 
-<button type="button" id="save-rates">Save Rates</button>
-<p id="rates-status" role="status" aria-live="polite"></p>
-        </div>
+                <button type="submit">Save Expense</button>
+                <p id="form-status" role="status"></p>
+            </form>
+        </section>
 
-        <div class="form-group">
-            <h3>Export Expenses</h3>
-            <p>Save your expense records as a JSON file.</p>
-            <button type="button" id="export-expenses">Export Expenses</button>
-        </div>
+        <section id="settings" aria-labelledby="settings-title">
+            <h2 id="settings-title">Settings</h2>
+            <p>Manage your finance tracker data and preferences.</p>
 
-        <div class="form-group">
-            <h3>Import Expenses</h3>
-            <p>Choose a JSON file containing your expense records.</p>
-            <label for="import-file">Select a JSON file</label>
-            <input type="file" id="import-file" accept=".json,application/json">
-            <button type="button" id="import-expenses">Import Expenses</button>
-            <p id="import-status" role="status" aria-live="polite"></p>
-        </div>
-    </section>
+            <div class="form-group">
+                <h3>Currency</h3>
+                <p>Choose the currency for your expenses and budget.</p>
+
+                <label for="currency-select">Display currency</label>
+                <select id="currency-select">
+                    <option value="RWF">RWF — Rwandan franc</option>
+                    <option value="USD">USD — US dollar</option>
+                    <option value="MWK">MWK — Malawian kwacha</option>
+                </select>
+
+                <p id="currency-status" role="status" aria-live="polite">
+                    Current currency: RWF
+                </p>
+
+                <h4>Exchange rates</h4>
+                <p>How much 1 RWF is worth in each currency.</p>
+
+                <label for="rate-usd">1 RWF in USD</label>
+                <input type="number" id="rate-usd" min="0" step="any">
+
+                <label for="rate-mwk">1 RWF in MWK</label>
+                <input type="number" id="rate-mwk" min="0" step="any">
+
+                <button type="button" id="save-rates">Save Rates</button>
+                <p id="rates-status" role="status" aria-live="polite"></p>
+            </div>
+
+            <div class="form-group">
+                <h3>Export Expenses</h3>
+                <p>Save your expense records as a JSON file.</p>
+                <button type="button" id="export-expenses">Export Expenses</button>
+            </div>
+
+            <div class="form-group">
+                <h3>Import Expenses</h3>
+                <p>Choose a JSON file containing your expense records.</p>
+                <label for="import-file">Select a JSON file</label>
+                <input type="file" id="import-file" accept=".json,application/json">
+                <button type="button" id="import-expenses">Import Expenses</button>
+                <p id="import-status" role="status" aria-live="polite"></p>
+            </div>
+        </section>
     </main>
 
     <footer class="site-footer">
         <p>&copy; 2026 Runway. Student Finance Tracker.</p>
-</footer>
+    </footer>
 </body>
 </html>
