@@ -6,7 +6,7 @@
     --cream: #F7F2E8;
     --white: #FFFFFF;
     --text: #29241E;
-    --muted: #776F64;
+    --muted: #6A6258;
     --border: #E5DCCB;
 }
 
@@ -115,7 +115,7 @@ body {
 .nav-list a:focus {
     background: var(--gold);
     color: var(--black);
-    outline: none;
+    outline: 3px;
 }
 
 .sidebar-currency {
@@ -196,7 +196,7 @@ section#about p {
     min-width: 0;
     padding: 22px;
     background: var(--cream);
-    border: 1px solid var(--border);
+    border: 1px solid var(--white);
     border-radius: 14px;
 }
 
@@ -282,14 +282,14 @@ button:hover {
 }
 
 /* Tablet and larger screens */
-@media (min-width: 700px) {
+@media (min-width: 768px) {
     .dashboard-summary {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 /* Desktop */
-@media (min-width: 1100px) {
+@media (min-width: 1024px) {
     .dashboard-summary {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
@@ -336,6 +336,7 @@ button:hover {
         padding: 10px;
         width: calc(100% - 85px);
         max-width: none;
+        min-width: 0;
     }
 
     section {
@@ -483,5 +484,19 @@ mark {
 
 .trend-col span {
     white-space: nowrap;
+}
+
+@media (max-width: 360px) {
+    .sidebar { width: 64px; height: 48px; font-size: 24px; }
+    .nav-list a { width:48px; height: 48px; font-size: 24px }
+    .brand-name, .sidebar-currency p { display: none; }
+    main { margin-left: 64px; width: calc(100% - 64%); padding: 8px; }
+    .site-footer { margin-left: 64px; }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .trend-bar { animation: none; }
 }
 

@@ -1,0 +1,19 @@
+[
+    {
+        "id": "txn_0001",
+        "description": "lunch",
+        "amount": 2500,
+        "category": "Food",
+        "needWant": "need",
+        "date": "2026-10-10"
+
+    },
+    {
+        "id": "txn_0003",
+        "description": "Movie",
+        "amount": 3000,
+        "category": "Entertainment",
+        "needWant": "want",
+        "date": "2026-10-14"
+    }
+] 

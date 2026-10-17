@@ -13,6 +13,8 @@ const budgetRemainingElement = document.getElementById("budget-remaining");
 const runwayDaysElement = document.getElementById("runway-days");
 const budgetForm = document.getElementById("budget-form");
 const budgetInput = document.getElementById("budget-amount");
+const formStatus = document.getElementById("form-status");
+const budgetStatus = document.getElementById("budget-status");
 
 let monthlyBudget = Number(
     localStorage.getItem("runway:monthly-budget")
@@ -301,7 +303,11 @@ function updateExtraStats() {
     document.getElementById("top-category").textContent = topCategory;
 
     // Budget message.
-    const message = document.getElementById("budget-message");
+    const politeBox = document.getElementById("budget-message-polite");
+    const alertBox = document.getElementById("budget-message-alert");
+    politeBox.textContent = "";
+    alertBox.textContent = "";
+
     const now = new Date();
     let monthTotal = 0;
 
@@ -314,19 +320,17 @@ function updateExtraStats() {
         }
     });
 
-    if (monthlyBudget <= 0) {
-        message.textContent = "";
+    if  (monthlyBudget <= 0) {
         return;
-    }
+}
 
-    if (monthTotal > monthlyBudget) {
-        message.setAttribute("aria-live", "assertive");
-        message.textContent =
-            "Over budget by " + formatCurrency(monthTotal - monthlyBudget) + ".";
-    } else {
-        message.setAttribute("aria-live", "polite");
-        message.textContent =
-            "You have " + formatCurrency(monthlyBudget - monthTotal) + " left this month.";
+if (monthTotal > monthlyBudget) {
+    alertBox.textContent =
+    "Over budget by " + formatCurrency(monthTotal - monthlyBudget) + ".";
+
+} else {
+    politeBox.textContent =
+        "You have " + formatCurrency(monthlyBudget - monthTotal) + " left this month.";
     }
 }
 // Update dashboard totals.
@@ -454,7 +458,7 @@ expenseForm.addEventListener("submit", function (event) {
     updateDashboard();
     displayExpenses();
 
-    alert("Expense saved successfully!");
+    formStatus.textContent = "Expense Saved.";
     expenseForm.reset();
 });
 
@@ -561,20 +565,9 @@ if (sortOption === "newest") {
             : "Your transactions will appear here.";
         return;
     }
-
-function formatCurrency(amount) {
-    const convertedAmount = Number(amount) * exchangeRates[selectedCurrency];
-
-    return currencySymbols[selectedCurrency] + " " +
-        convertedAmount.toLocaleString("en-US", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-}
-
-
+          
     recordsMessage.textContent = "";
-
+        
     const table = document.createElement("table");
     const headerRow = table.insertRow();
 
@@ -775,7 +768,7 @@ budgetForm.addEventListener("submit", function (event) {
     const amount = Number(budgetInput.value);
 
     if (!Number.isFinite(amount) || amount <= 0) {
-        alert("Please enter a valid budget greater than zero.");
+        budgetStatus.textContent = "Please enter a budget greater than zero.";
         return;
     }
 
@@ -787,7 +780,7 @@ budgetForm.addEventListener("submit", function (event) {
     );
 
     updateDashboard();
-    alert("Monthly budget saved successfully!");
+    budgetStatus.textContent = "Monthly budget saved.";
 });
 // Show saved totals and records when the page opens.
 updateDashboard();

@@ -62,7 +62,7 @@
         <section id="about" aria-labelledby="about-title">
             <h1 id="about-title">Know how far your money goes.</h1>
             <p>Runway helps students understand their spending and make informed financial decisions.</p>
-                  <p>
+                  <P>
                 Contact:
                 <a href="https://github.com/wselemani">GitHub: wselemani</a>
                 |
@@ -102,10 +102,12 @@
             required
         >
         <button type="submit">Save Budget</button>
+        <p id="budget-status" role="status"></p>
     </form>
 
     <p>Remaining: <span id="budget-remaining">Not set</span></p>
-   <p id="budget-message" aria-live="polite"></p> 
+    <p id="budget-message-polite" role="status"></p>
+    <p id="budget-message-alert" role="alert"></p>
 </article>
 
     <article class="summary-card">
@@ -115,8 +117,7 @@
      <article class="summary-card">
     <h3>Total Records</h3>
     <p id="record-count">0</p>
-</article./validators.js";
-caseToggle.addEventListener("change", displayExpenses);./validators.js";
+     </article>
 
 <article class="summary-card">
     <h3>Top Category</h3>
@@ -210,6 +211,7 @@ caseToggle.addEventListener("change", displayExpenses);./validators.js";
     </fieldset>
 
     <button type="submit">Save Expense</button>
+    <p id="form-status" role="status"></p>
 </form> 
 </section>
 
