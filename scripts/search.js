@@ -37,3 +37,7 @@ export function sortExpenses(list, option) {
 
     return [...list].sort(sorters[option] || sorters.newest);
 }
+
+    
+
+            
