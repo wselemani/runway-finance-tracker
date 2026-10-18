@@ -26,8 +26,44 @@ Technologies
 3. Javascript
 4. Browser localStorage
 
+Keyboard Navigation
+- Tab / Shift+Tab move between links, fields and buttons
+- Enter submits forms and activates buttons
+- A skip link appears on the first Tab press
+- Focus outlines are visible on every interactive element
+
+Accessibility
+-semantic landmarks 
+-every form field has a linked label
+-erros and status messages are announced with aria-live and role="status"
+-respects reduced-motion preferences
+
+## Regex Catalog
+| Field | Pattern | Purpose |
+|---|---|---|
+| Description | `your pattern` | what it checks |
+| Amount | `your pattern` | what it checks |
+| Date | `your pattern` | what it checks |
+|Search | user-entered | invalid patterns show an eeror instead of crashing | 
+
+Project Structure
+1. index.html
+-styles/main.css
+-scripts/ main.js. state.js, storage.js, validators.js
+-tests.html
+-seed.json
+-docs/ M1 specification and wireframes
+
 How To Run
--Open index.html in a browser, or run the project using VS Code Live Server extension.
+1. Clone the repository
+2. Open index.html through VS code Live Servein a browser
+3. Or Visit the live site above
+
+How to Run the Tests
+1. Open tests.html in browser through Libe server
+-it checks teh validation and search logic and results on the show page.
+
 
 Author
 Wezzie Selemani
+GitHUb: [github.com/wselemani](https://github.com/wselemani) | selemaniwezzie5@gmail.com
