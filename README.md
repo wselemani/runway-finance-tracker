@@ -41,10 +41,12 @@ Accessibility
 ## Regex Catalog
 | Field | Pattern | Purpose |
 |---|---|---|
-| Description | `your pattern` | what it checks |
-| Amount | `your pattern` | what it checks |
-| Date | `your pattern` | what it checks |
-|Search | user-entered | invalid patterns show an eeror instead of crashing | 
+| Description | `^\S(?:.*\S)?$` | Not empty, no spaces at the start or end |
+| Description (repeated words) | `\b(\w+)\s+\1\b` (case-insensitive) | Back-reference that catches repeated words like "the the" |
+| Description (tidy) | `\s{2,}` | Collapses double spaces before saving |
+| Amount | `^(0\|[1-9]\d*)(\.\d{1,2})?$` | Number with up to 2 decimals, no leading zeros |
+| Date | 'your pattern' | what it checks | 
+| Search | user-entered | invalid patterns show an error instead of crashing |
 
 Project Structure
 1. index.html
