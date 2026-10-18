@@ -191,7 +191,7 @@ section#about p {
 
 .dashboard-summary {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 18px;
 }
 
@@ -536,4 +536,73 @@ section#about a:focus-visible {
     outline: 3px solid var(--white);
     outline-offset: 2px;
 
+}
+
+@media (max-width: 600px) {
+    .sidebar {
+        position: sticky;
+        top: 0;
+        left: auto;
+        bottom: auto;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 8px 12px;
+        overflow: visible;
+    }
+ 
+    .brand {
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    .brand-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 22px;
+        border-radius: 12px;
+    }
+
+    .brand-name,
+    .sidebar-currency {
+        display: none;
+    }
+
+    .sidebar nav {
+        width: auto;
+        margin-top: 0;
+    }
+
+    .nav-list {
+        flex-direction: row;
+        gap: 4px;
+    }
+
+    .nav-list a {
+        width: 44px;
+        height: 44px;
+        font-size: 22px;
+    }
+
+    main {
+        margin-left: 0;
+        width: 100%;
+        padding: 12px;
+    }
+
+    .site-footer {
+        margin-left: 0;
+    }
+
+    section {
+        scroll-margin-top: 80px; 
+    
+    }
+
+}
+
+html,
+body {
+    overflow-x: clip;
 }
