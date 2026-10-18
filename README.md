@@ -3,7 +3,7 @@ RUNWAY- Student Finance Tracker
 Tagline: Know how far your money goes.
 
 About the Project
-Runway is a responsive student finance tracker that helps mainly Collge students record expenses,monitor spending and manage a monthly budget.
+Runway is a responsive student finance tracker that helps mainly Collage students record expenses,monitor spending and manage a monthly budget.
 
 Features
 1. add,edit and delete expenses
@@ -35,7 +35,7 @@ Keyboard Navigation
 Accessibility
 -semantic landmarks 
 -every form field has a linked label
--erros and status messages are announced with aria-live and role="status"
+-errors and status messages are announced with aria-live and role="status"
 -respects reduced-motion preferences
 
 ## Regex Catalog
@@ -56,8 +56,8 @@ Project Structure
 
 How To Run
 1. Clone the repository
-2. Open index.html through VS code Live Servein a browser
-3. Or Visit the live site above
+2. Open index.html through VS code Live Server a browser
+3. Or Visit the live site below
 
 How to Run the Tests
 1. Open tests.html in browser through Libe server
